@@ -1,17 +1,11 @@
-[tool.poetry]
+[project]
 name = "rr-cleaner"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
-
-[tool.poetry.dependencies]
-python = "^3.10"
-python-dotenv = "^0.20.0"
-qbittorrent-api = "^2022.8.36"
-loguru = "^0.6.0"
-
-[tool.poetry.dev-dependencies]
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "loguru>=0.7.3",
+    "python-dotenv>=1.1.1",
+    "qbittorrent-api>=2025.7.0",
+]
