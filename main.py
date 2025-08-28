@@ -18,12 +18,14 @@ qbt_host = environ.get("QBITTORRENT_HOST")
 
 qbt_client = qbittorrentapi.Client(host=qbt_host, username=qbt_login, password=qbt_password)
 qbt_client.auth_log_in()
+logger.debug("Logged in")
 
 torrents = qbt_client.torrents_info()
+logger.debug(f"Found {len(torrents)} torrents")
 
 def find_torrent(path):
-    # Replace /srv/torrents by nothing (to match the qbittorrent container file system)
-    path = re.sub(r'^/srv/torrents', '', path)
+    # Replace /srv/rr-stack by nothing (to match the qbittorrent container file system)
+    path = re.sub(r'^/srv/rr-stack', '', path)
 
     for torrent in torrents:
         if torrent.content_path == path:
@@ -41,7 +43,7 @@ def recurse_list(path):
 
 
 for service in ('sonarr', 'radarr'):
-    for file_path in glob(f'/srv/torrents/data/downloads/{service}/*'):
+    for file_path in glob(f'/srv/rr-stack/data/downloads/{service}/*'):
         # If the file is a file, check if it has one link
         if os.path.isfile(file_path):
             stat = os.stat(file_path)
@@ -49,7 +51,7 @@ for service in ('sonarr', 'radarr'):
             if stat.st_nlink == 1:
                 torrent = find_torrent(file_path)
                 delete_torrent(torrent)
-                print(f"Deleted {file_path}")
+                logger.info(f"Deleted {file_path}")
 
         # If the file is a dir, check if one file has 2 symlinks => all files have one link
         if os.path.isdir(file_path):
@@ -69,6 +71,6 @@ for service in ('sonarr', 'radarr'):
             if is_useless:
                 torrent = find_torrent(file_path)
                 delete_torrent(torrent)
-                print(f"Deleted {file_path}")
+                logger.warning(f"Deleted {file_path}")
 
 qbt_client.auth_log_out()
